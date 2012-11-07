@@ -50,4 +50,9 @@ describe BackupJenkins::Config do
       expect{ subject.send(:config_file) }.to raise_error SystemExit
     end
   end
+
+  describe "#config_file_example" do
+    regexp = %r{backup_jenkins/config/config-example.yml$}
+    it { subject.send(:config_file_example_path).should =~ regexp }
+  end
 end

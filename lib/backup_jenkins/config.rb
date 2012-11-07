@@ -31,13 +31,21 @@ module BackupJenkins
       YAML.load_file(config_file_path)
     rescue Errno::ENOENT
       STDERR.puts "Please create a config file in #{config_file_path}"
-      STDERR.puts "\nIt should look like:\n\n#{File.read('config/config-example.yml')}"
+      STDERR.puts "\nIt should look like:\n\n#{config_file_example}"
 
       exit 1
     end
 
     def config_file_path
       "#{ENV['HOME']}/.config/backup_jenkins/config.yml"
+    end
+
+    def config_file_example
+      File.read(config_file_example_path)
+    end
+
+    def config_file_example_path
+      File.expand_path('../../../config/config-example.yml', __FILE__)
     end
   end
 end
