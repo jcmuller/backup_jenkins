@@ -13,7 +13,10 @@ describe BackupJenkins::AWS do
 
   before do
     BackupJenkins::Config.should_receive(:new).and_return(config)
+
     config.stub(:aws).and_return({ "access_key" => "some_key", "secret" => "some_secret" })
+    config.stub(:backup).and_return({ "backups_to_keep" => 2 })
+
     ::AWS::S3.stub(:new).and_return(s3_mocks)
   end
 
@@ -32,9 +35,26 @@ describe BackupJenkins::AWS do
     end
   end
 
-  describe "#populate_files"
-  describe "#remove_old_files"
-  describe "#files_to_remove"
-  describe "#upload_file"
+  describe "#populate_files" do
+    it "should get objects with prefix"
+  end
 
+  describe "#remove_old_files" do
+    it "should populate_files"
+    it "should iterate over files_to_remove"
+    it "should call delete"
+    it "should print stuff"
+  end
+
+  describe "#files_to_remove" do
+    it "should get the last n files (where n is total number - keep)" do
+      subject.stub(:files).and_return(%w(a b c d e f g))
+      subject.files_to_remove.should == ["a", "b", "c", "d", "e"]
+    end
+  end
+
+  describe "#upload_file" do
+    it "should create a file"
+    it "should raise exception if no s3 object is created"
+  end
 end
