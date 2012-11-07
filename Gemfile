@@ -8,4 +8,5 @@ group :test do
   gem "ci_reporter"
   gem "simplecov"
   gem "simplecov-rcov"
+  gem "flog"
 end
