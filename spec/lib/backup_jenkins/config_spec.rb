@@ -3,7 +3,12 @@ require 'tempfile'
 
 describe BackupJenkins::Config do
   before do
-    #YAML.stub(:load_file).and_return({"access_key" => "some_key", "secret" => "some_secret"})
+    YAML.stub(:load_file).and_return({
+      "aws" => {
+        "access_key" => "some_key",
+        "secret" => "some_secret"
+      }
+    })
   end
 
   it "should get from YAML and define aws_key" do
