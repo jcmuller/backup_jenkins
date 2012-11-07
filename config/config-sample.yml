@@ -1,2 +1,12 @@
-access_key: AMAZON_ACCESS_KEY
-secret: AMAZON_SECRET
+aws:
+  access_key: AWS_ACCESS_KEY
+  secret: AWS_SECRET
+  bucket_name: BUCKET_NAME
+backup:
+  dir_base: PATH_TO_BACKUP_DIRECTORY
+  file_name_base: SOME_BASE_NAME
+  timestamp: "%Y%m%d_%H%M"
+  backups_to_keep: 2
+jenkins:
+  home: PATH_TO_JENKINS_HOME
+verbose: true
