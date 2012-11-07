@@ -7,15 +7,7 @@ module BackupJenkins
     end
 
     def backup_directory
-      @backup_directory ||= "#{config.backup["dir_base"]}/#{base_file_name}_#{timestamp}"
-    end
-
-    def base_file_name
-      "#{config.backup["file_name_base"]}_#{hostname}"
-    end
-
-    def hostname
-      %x{hostname -s}.chomp
+      @backup_directory ||= "#{config.backup["dir_base"]}/#{config.base_file_name}_#{timestamp}"
     end
 
     def create_dir_and_copy(file_names)
@@ -28,12 +20,14 @@ module BackupJenkins
       raise "file '#{file_name}' does not exist" unless FileTest.file?(file_name)
 
       new_file_name = new_file_path(file_name)
-      FileUtils.mkdir_p(File.dirname(new_file_name), verbose: config.verbose)
+      new_file_dir = File.dirname(new_file_name)
+
+      FileUtils.mkdir_p(new_file_dir, verbose: config.verbose)
       FileUtils.cp(file_name, new_file_name, verbose: config.verbose)
     end
 
     def new_file_path(file_name)
-      "#{backup_directory}/#{file_name.gsub(%r{#{config.jenkins["home"]}}, "")}"
+      "#{backup_directory}/#{file_name.gsub(%r{#{config.jenkins["home"]}}, "")}".gsub(%r{//}, '/')
     end
 
     def do_backup
@@ -80,9 +74,9 @@ module BackupJenkins
     end
 
     def tar_options
-      options = %w(jcf)
-      options.unshift('v') if config.verbose
-      options.join('')
+      %w(j c f).tap do |options|
+        options.unshift('v') if config.verbose
+      end.join('')
     end
 
     private
