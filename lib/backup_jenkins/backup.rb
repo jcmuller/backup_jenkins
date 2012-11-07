@@ -7,7 +7,15 @@ module BackupJenkins
     end
 
     def backup_directory
-      @backup_directory ||= "#{config.backup["dir_base"]}/#{config.backup["file_name_base"]}#{timestamp}"
+      @backup_directory ||= "#{config.backup["dir_base"]}/#{base_file_name}_#{timestamp}"
+    end
+
+    def base_file_name
+      "#{config.backup["file_name_base"]}_#{hostname}"
+    end
+
+    def hostname
+      %x{hostname -s}.chomp
     end
 
     def create_dir_and_copy(file_names)
