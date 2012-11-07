@@ -6,4 +6,6 @@ gemspec
 group :test do
   gem "rspec"
   gem "ci_reporter"
+  gem "simplecov"
+  gem "simplecov-rcov"
 end
