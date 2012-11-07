@@ -4,6 +4,7 @@ source :rubygems
 gemspec
 
 group :test do
+  gem "rake"
   gem "rspec"
   gem "ci_reporter"
   gem "simplecov"
