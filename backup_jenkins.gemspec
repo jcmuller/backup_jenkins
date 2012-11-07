@@ -4,8 +4,8 @@ require File.expand_path('../lib/backup_jenkins/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Juan C. Müller"]
   gem.email         = ["jcmuller@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %{Simple Jenkins config and plugin backup to S3}
+  gem.summary       = %q{This gem allows you to get a backup instance of jenkins up and running pretty quickly}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
