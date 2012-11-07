@@ -26,4 +26,28 @@ describe BackupJenkins::Config do
     after { subject.hostname.should == 'hostname' }
     it { subject.should_receive(:`).with("hostname -s").and_return("hostname\n") }
   end
+
+  describe "#config_file" do
+    it "should load file" do
+      YAML.should_receive(:load_file).and_return("configuration")
+      subject.instance_variable_get(:"@config").should == "configuration"
+    end
+
+    it "should exit with non 0 on error" do
+      YAML.should_receive(:load_file).and_raise(Errno::ENOENT)
+      expect{ subject }.to raise_error SystemExit
+    end
+
+    it "should print some helpful text if config file doesn't exist" do
+      subject.should_receive(:config_file_path).twice.and_return("config")
+
+      YAML.should_receive(:load_file).and_raise(Errno::ENOENT)
+      File.should_receive(:read).and_return("sample")
+
+      STDERR.should_receive(:puts).with("Please create a config file in config")
+      STDERR.should_receive(:puts).with("\nIt should look like:\n\nsample")
+
+      expect{ subject.send(:config_file) }.to raise_error SystemExit
+    end
+  end
 end

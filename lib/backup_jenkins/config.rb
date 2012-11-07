@@ -3,7 +3,7 @@ module BackupJenkins
     attr_reader :s3
 
     def initialize
-      @config = YAML.load_file("config/config.yml")
+      @config = config_file
     end
 
     def method_missing(meth, *args, &block)
@@ -27,5 +27,17 @@ module BackupJenkins
 
     attr_reader :config
 
+    def config_file
+      YAML.load_file(config_file_path)
+    rescue Errno::ENOENT
+      STDERR.puts "Please create a config file in #{config_file_path}"
+      STDERR.puts "\nIt should look like:\n\n#{File.read('config/config-example.yml')}"
+
+      exit 1
+    end
+
+    def config_file_path
+      "#{ENV['HOME']}/.config/backup_jenkins/config.yml"
+    end
   end
 end
