@@ -15,6 +15,14 @@ module BackupJenkins
       config.has_key?(meth.to_s) || super
     end
 
+    def base_file_name
+      "#{backup["file_name_base"]}_#{hostname}"
+    end
+
+    def hostname
+      %x{hostname -s}.chomp
+    end
+
     private
 
     attr_reader :config
