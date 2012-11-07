@@ -1,4 +1,5 @@
 # BackupJenkins
+[![Build Status](https://secure.travis-ci.org/jcmuller/jenkins_backup.png)](http://travis-ci.org/jcmuller/jenkins_backup)
 
 TODO: Write a gem description
 
