@@ -52,7 +52,9 @@ module BackupJenkins
     end
 
     def plugin_files
-      Dir["#{config.jenkins["home"]}/plugins/*.jpi"]
+      Dir["#{config.jenkins["home"]}/plugins/*.jpi"] +
+        Dir["#{config.jenkins["home"]}/plugins/*.jpi.pinned"] +
+        Dir["#{config.jenkins["home"]}/plugins/*.jpi.disabled"]
     end
 
     def user_content_files
