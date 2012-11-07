@@ -1,5 +1,7 @@
 module BackupJenkins
   class AWS
+    class UploadFileError < StandardError; end
+
     def initialize(config = Config.new)
       @config = config
       setup_aws
@@ -7,22 +9,27 @@ module BackupJenkins
 
     def populate_files
       @files = []
-      bucket.objects.with_prefix(config.backup["file_name_base"]).each{ |o| files << o }
+      backup_files.each{ |o| files << o }
       @files.sort!{ |a, b| a.key <=> b.key }
+    end
+
+    def backup_files
+      s3_files.with_prefix(config.base_file_name)
     end
 
     # TODO change this to use a time decay algorithm
     def remove_old_files
       puts "Looking for old files..." if config.verbose
-
       populate_files
+      do_remove_old_files
+      puts "Done." if config.verbose
+    end
 
+    def do_remove_old_files
       files_to_remove.each do |file|
         puts "Removing #{file.key}..." if config.verbose
         file.delete
       end
-
-      puts "Done." if config.verbose
     end
 
     def files_to_remove
@@ -31,9 +38,9 @@ module BackupJenkins
 
     def upload_file(filename, file)
       puts "About to upload #{filename}..." if config.verbose
-      new_file = bucket.objects.create(filename, file)
+      new_file = s3_files.create(filename, file)
       puts "Done" if config.verbose
-      raise "Error uploading" unless new_file.class == ::AWS::S3::S3Object
+      raise UploadFileError unless new_file.class == ::AWS::S3::S3Object
     end
 
     private
@@ -48,6 +55,10 @@ module BackupJenkins
       @bucket = s3.buckets[config.aws["bucket_name"]]
       @bucket = s3.buckets.create(config.aws["bucket_name"]) unless @bucket.exists?
       raise "Couldn't create bucket!" unless @bucket.exists?
+    end
+
+    def s3_files
+      bucket.objects
     end
 
   end
