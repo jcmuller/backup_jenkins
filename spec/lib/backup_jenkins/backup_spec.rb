@@ -143,7 +143,7 @@ describe BackupJenkins::Backup do
 
     it "should return the config.xml and nextBuildNumber files in job directories" do
       subject.should_receive(:`).
-        with("find home -maxdepth 3 -name config.xml -or -name nextBuildNumber").
+        with("find home/jobs -maxdepth 3 -name config.xml -or -name nextBuildNumber").
         and_return("file1\nfile2\nfile3")
       subject.jobs_files.should == %w(file1 file2 file3)
     end

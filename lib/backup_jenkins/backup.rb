@@ -56,7 +56,7 @@ module BackupJenkins
     end
 
     def jobs_files
-      `find #{config.jenkins["home"]} -maxdepth 3 -name config.xml -or -name nextBuildNumber`.split(/\n/)
+      `find #{config.jenkins["home"]}/jobs -maxdepth 3 -name config.xml -or -name nextBuildNumber`.split(/\n/)
     end
 
     def create_tarball
