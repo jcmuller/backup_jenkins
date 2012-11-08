@@ -1,7 +1,7 @@
 # BackupJenkins
-[![Build Status](https://secure.travis-ci.org/jcmuller/jenkins_backup.png)](http://travis-ci.org/jcmuller/jenkins_backup)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/jcmuller/jenkins_backup)
-[![Dependency Status](https://gemnasium.com/jcmuller/jenkins_backup.png)](https://gemnasium.com/jcmuller/jenkins_backup)
+[![Build Status](https://secure.travis-ci.org/jcmuller/backup_jenkins.png)](http://travis-ci.org/jcmuller/backup_jenkins)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/jcmuller/backup_jenkins)
+[![Dependency Status](https://gemnasium.com/jcmuller/backup_jenkins.png)](https://gemnasium.com/jcmuller/backup_jenkins)
 
 TODO: Write a gem description
 
