@@ -48,13 +48,17 @@ module BackupJenkins
     attr_reader :config, :bucket, :files
 
     def setup_aws
-      s3 = ::AWS::S3.new(
-        :access_key_id => config.aws["access_key"],
-        :secret_access_key => config.aws["secret"]
-      )
+      s3 = initialize_s3_object
       @bucket = s3.buckets[config.aws["bucket_name"]]
       @bucket = s3.buckets.create(config.aws["bucket_name"]) unless @bucket.exists?
       raise "Couldn't create bucket!" unless @bucket.exists?
+    end
+
+    def initialize_s3_object
+      ::AWS::S3.new(
+        :access_key_id => config.aws["access_key"],
+        :secret_access_key => config.aws["secret"]
+      )
     end
 
     def s3_files
