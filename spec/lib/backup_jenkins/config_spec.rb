@@ -52,7 +52,7 @@ describe BackupJenkins::Config do
   end
 
   describe "#config_file_example" do
-    regexp = %r{backup_jenkins/config/config-example.yml$}
-    it { subject.send(:config_file_example_path).should =~ regexp }
+    regexp = %r{config/config-example.yml$}
+    it { subject.send(:config_file_example_path).should match regexp }
   end
 end
