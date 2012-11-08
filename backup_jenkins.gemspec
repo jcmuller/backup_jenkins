@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["jcmuller@gmail.com"]
   gem.description   = %{Simple Jenkins config and plugin backup to S3}
   gem.summary       = %q{This gem allows you to get a backup instance of jenkins up and running pretty quickly}
-  gem.homepage      = "http://github.com/jcmuller/jenkins_backup"
+  gem.homepage      = "http://github.com/jcmuller/backup_jenkins"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
