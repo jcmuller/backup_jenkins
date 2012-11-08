@@ -17,7 +17,6 @@ module BackupJenkins
       s3_files.with_prefix(config.base_file_name)
     end
 
-    # TODO change this to use a time decay algorithm
     def remove_old_files
       puts "Looking for old files..." if config.verbose
       populate_files
@@ -32,6 +31,7 @@ module BackupJenkins
       end
     end
 
+    # TODO change this to use a time decay algorithm
     def files_to_remove
       files - files.last(config.backup["backups_to_keep"])
     end
