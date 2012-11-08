@@ -76,12 +76,12 @@ describe BackupJenkins::Backup do
     end
 
     it "should create directory new_directory" do
-      FileUtils.should_receive(:mkdir_p).with("/this/is/a/new/path", verbose: false)
+      FileUtils.should_receive(:mkdir_p).with("/this/is/a/new/path", :verbose => false)
       subject.create_dir_and_copy_impl("filename")
     end
 
     it "should copy old file to new file" do
-      FileUtils.should_receive(:cp).with("filename", "/this/is/a/new/path/to_file", verbose: false)
+      FileUtils.should_receive(:cp).with("filename", "/this/is/a/new/path/to_file", :verbose => false)
       subject.create_dir_and_copy_impl("filename")
     end
 
@@ -177,7 +177,7 @@ describe BackupJenkins::Backup do
     end
 
     after { subject.remove_temporary_files }
-    it { FileUtils.should_receive(:rm_rf).with("backup_directory", verbose: false) }
+    it { FileUtils.should_receive(:rm_rf).with("backup_directory", :verbose => false) }
   end
 
   describe "#tar_options" do

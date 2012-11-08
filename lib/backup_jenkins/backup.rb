@@ -22,8 +22,8 @@ module BackupJenkins
       new_file_name = new_file_path(file_name)
       new_file_dir = File.dirname(new_file_name)
 
-      FileUtils.mkdir_p(new_file_dir, verbose: config.verbose)
-      FileUtils.cp(file_name, new_file_name, verbose: config.verbose)
+      FileUtils.mkdir_p(new_file_dir, :verbose => config.verbose)
+      FileUtils.cp(file_name, new_file_name, :verbose => config.verbose)
     end
 
     def new_file_path(file_name)
@@ -66,7 +66,7 @@ module BackupJenkins
     end
 
     def remove_temporary_files
-      FileUtils.rm_rf(backup_directory, verbose: config.verbose)
+      FileUtils.rm_rf(backup_directory, :verbose => config.verbose)
     end
 
     def tarball_filename

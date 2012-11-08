@@ -18,6 +18,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency("aws-sdk")
 
   gem.add_development_dependency("rake")
-  gem.add_development_dependency("pry-debugger")
-  gem.add_development_dependency("pry-stack_explorer")
+  #gem.add_development_dependency("pry-debugger")
+  #gem.add_development_dependency("pry-stack_explorer")
 end
