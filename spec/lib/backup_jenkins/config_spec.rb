@@ -5,7 +5,8 @@ describe BackupJenkins::Config do
   before do
     config = {
       "aws" => { "access_key" => "some_key", "secret" => "some_secret" },
-      "backup" => { "file_name_base" => "jenkins" }
+      "backup" => { "file_name_base" => "jenkins" },
+      "verbose" => true
     }
 
     YAML.stub(:load_file).and_return(config)
@@ -54,5 +55,13 @@ describe BackupJenkins::Config do
   describe "#config_file_example" do
     regexp = %r{config/config-example.yml$}
     it { subject.send(:config_file_example_path).should match regexp }
+  end
+
+  describe "#override" do
+    it "should override config file" do
+      subject.verbose.should be_true
+      subject.override("verbose" => false)
+      subject.verbose.should be_false
+    end
   end
 end
