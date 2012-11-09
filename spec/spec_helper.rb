@@ -14,6 +14,9 @@ SimpleCov.start do
 end
 
 require 'backup_jenkins'
+require 'fakeweb'
+
+FakeWeb.allow_net_connect = false
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

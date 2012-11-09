@@ -15,6 +15,7 @@ end
 
 group :test do
   gem "ci_reporter"
+  gem "fakeweb"
   gem "rake"
   gem "rspec"
   gem "simplecov"
