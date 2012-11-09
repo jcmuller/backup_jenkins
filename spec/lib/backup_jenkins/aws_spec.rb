@@ -8,7 +8,7 @@ describe BackupJenkins::AWS do
     BackupJenkins::Config.stub(:new).and_return(config)
 
     config.stub(:aws).and_return({ "access_key" => "some_key", "secret" => "some_secret" })
-    config.stub(:backup).and_return({ "backups_to_keep" => 2 })
+    config.stub(:backup).and_return({ "backups_to_keep" => 2, "file_name_base" => "jenkins" })
 
     ::AWS::S3.stub(:new).and_return(s3_mocks)
   end
@@ -28,26 +28,36 @@ describe BackupJenkins::AWS do
     end
   end
 
-  describe "#populate_files" do
-    it "should get the objects from backup_files and sort them" do
+  describe "#files" do
+    it "should get the objects from backup_files_for_this_host and sort them" do
       a = mock(:key => 1)
       b = mock(:key => 2)
       c = mock(:key => 3)
 
-      subject.should_receive(:backup_files).and_return([b, c, a])
-      subject.populate_files.should == [a, b, c]
+      subject.should_receive(:backup_files_for_this_host).and_return([b, c, a])
+      subject.send(:files).should == [a, b, c]
       subject.instance_variable_get(:"@files").should == [a, b, c]
     end
   end
 
-  describe "#backup_files" do
+  describe "#backup_files_for_this_host" do
     it "should return the right files" do
       config.should_receive(:base_file_name).and_return("base_file_name")
       objects = mock
       objects.should_receive(:with_prefix).with("base_file_name").and_return([1, 2, 3])
       subject.should_receive(:s3_files).and_return(objects)
 
-      subject.backup_files.should == [1, 2, 3]
+      subject.send(:backup_files_for_this_host).should == [1, 2, 3]
+    end
+  end
+
+  describe "#list_backup_files" do
+    it "should call the right methods" do
+      subject.should_receive(:s3_object_to_hash).twice.and_return(:blah)
+      subject.should_receive(:backup_files_for_all_hosts).and_return([mock, mock])
+      subject.should_receive(:format_backup_file_data).with([:blah, :blah])
+
+      subject.list_backup_files
     end
   end
 
@@ -56,20 +66,8 @@ describe BackupJenkins::AWS do
       config.stub(:verbose).and_return(false)
     end
 
-    it "should populate_files" do
-      subject.should_receive(:populate_files)
+    it "should call do_remove_old_files" do
       subject.should_receive(:do_remove_old_files)
-      subject.remove_old_files
-    end
-
-    it "should print stuff if verbose", :pending => 'failing on JRuby' do
-      config.should_receive(:verbose).twice.and_return(true)
-      subject.stub(:populate_files)
-      subject.stub(:do_remove_old_files)
-
-      STDOUT.should_receive(:puts).with("Looking for old files...")
-      STDOUT.should_receive(:puts).with("Done.")
-
       subject.remove_old_files
     end
   end
@@ -85,24 +83,14 @@ describe BackupJenkins::AWS do
       file_2.should_receive(:delete)
 
       subject.should_receive(:files_to_remove).and_return([file_1, file_2])
-      subject.do_remove_old_files
-    end
-
-    it "should output that's removing a file if verbose", :pending => 'failing on JRuby' do
-      file_1 = mock(:key => "filename", :delete => true)
-
-      config.should_receive(:verbose).and_return(true)
-      subject.should_receive(:files_to_remove).and_return([file_1])
-      STDOUT.should_receive(:puts).with("Removing filename...")
-
-      subject.do_remove_old_files
+      subject.send(:do_remove_old_files)
     end
   end
 
   describe "#files_to_remove" do
     it "should get the last n files (where n is total number - keep)" do
       subject.stub(:files).and_return(%w(a b c d e f g))
-      subject.files_to_remove.should == ["a", "b", "c", "d", "e"]
+      subject.send(:files_to_remove).should == ["a", "b", "c", "d", "e"]
     end
   end
 
@@ -114,19 +102,6 @@ describe BackupJenkins::AWS do
         mock(:class => AWS::S3::S3Object)
       )
       subject.should_receive(:s3_files).and_return(objects)
-
-      subject.upload_file("filename", "file")
-    end
-
-    it "should print stuff in verbose", :pending => 'failing on JRuby' do
-      config.should_receive(:verbose).twice.and_return(true)
-
-      objects = mock
-      objects.stub(:create).with("filename", "file").and_return(mock(:class => AWS::S3::S3Object))
-      subject.stub(:s3_files).and_return(objects)
-
-      STDOUT.should_receive(:puts).with("About to upload filename...")
-      STDOUT.should_receive(:puts).with("Done")
 
       subject.upload_file("filename", "file")
     end
