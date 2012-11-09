@@ -106,12 +106,16 @@ module BackupJenkins
     end
 
     def backup_files
-      Dir["#{config.backup["dir_base"]}/#{config.base_file_name}_*tar.bz2"].map do |file|
+      glob_of_backup_files.sort.map do |file|
         {
           :key => file.gsub(%r{#{config.backup["dir_base"]}/}, ''),
           :content_length => File.size(file)
         }
       end
+    end
+
+    def glob_of_backup_files
+      Dir["#{config.backup["dir_base"]}/#{config.base_file_name}_*tar.bz2"]
     end
   end
 end
