@@ -61,6 +61,19 @@ describe BackupJenkins::Backup do
     end
   end
 
+  describe "#list_local_files" do
+    before do
+      config.stub(:backup).and_return("dir_base" => "base")
+      config.stub(:base_file_name).and_return("base_file_name")
+    end
+
+    it "should call the right methods" do
+      subject.should_receive(:backup_files)
+      subject.should_receive(:format_backup_file_data)
+      subject.list_local_files
+    end
+  end
+
   describe "#create_dir_and_copy_impl" do
     before do
       FileTest.stub(:file?).and_return(true)

@@ -2,6 +2,8 @@ require 'fileutils'
 
 module BackupJenkins
   class Backup
+    include BackupJenkins::Formatter
+
     def initialize(config = Config.new)
       @config = config
     end
@@ -14,6 +16,10 @@ module BackupJenkins
       file_names.each do |file_name|
         create_dir_and_copy_impl(file_name)
       end
+    end
+
+    def list_local_files
+      format_backup_file_data(backup_files)
     end
 
     def create_dir_and_copy_impl(file_name)
@@ -85,6 +91,15 @@ module BackupJenkins
 
     def timestamp
       Time.now.strftime(config.backup["timestamp"])
+    end
+
+    def backup_files
+      Dir["#{config.backup["dir_base"]}/#{config.base_file_name}_*tar.bz2"].map do |file|
+        {
+          :key => file.gsub(%r{#{config.backup["dir_base"]}/}, ''),
+          :content_length => File.size(file)
+        }
+      end
     end
   end
 end
