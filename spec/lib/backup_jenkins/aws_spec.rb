@@ -51,6 +51,17 @@ describe BackupJenkins::AWS do
     end
   end
 
+  describe "#backup_files_for_all_hosts" do
+    it "should return the right files" do
+      config.should_receive(:backup).and_return("file_name_base" => "base_file_name")
+      objects = mock
+      objects.should_receive(:with_prefix).with("base_file_name").and_return([1, 2, 3])
+      subject.should_receive(:s3_files).and_return(objects)
+
+      subject.send(:backup_files_for_all_hosts).should == [1, 2, 3]
+    end
+  end
+
   describe "#list_backup_files" do
     it "should call the right methods" do
       subject.should_receive(:s3_object_to_hash).twice.and_return(:blah)
@@ -118,8 +129,46 @@ describe BackupJenkins::AWS do
     end
   end
 
+  describe "#download_file" do
+    it "should locate a file" do
+      chunk = mock
+      io = mock
+      name = mock
+      remote_file = mock
+      remote_files = mock
+
+      subject.stub(:bucket).and_return(remote_files)
+      remote_files.should_receive(:objects).and_return({ name => remote_file })
+      remote_file.should_receive(:read).and_yield(chunk)
+
+      File.should_receive(:open).with(name, 'w').and_yield(io)
+      io.should_receive(:write).with(chunk)
+
+      STDOUT.should_receive(:print).with(".")
+      STDOUT.should_receive(:puts).with(".")
+
+      subject.download_file(name)
+    end
+  end
+
   describe "#s3_files" do
     after { subject.send(:s3_files) }
     it { subject.should_receive(:bucket).and_return(mock(:objects => mock)) }
+  end
+
+  describe "#s3_object_to_hash" do
+    it "should return a hash from s3 object" do
+      s3_object = mock(
+        :key => "key",
+        :content_length => "length",
+        :metadata => "this is so meta",
+        :another_key => "Which will be ignored"
+      )
+      subject.send(:s3_object_to_hash, s3_object).should == {
+        :content_length => "length",
+        :key => "key",
+        :metadata => "this is so meta"
+      }
+    end
   end
 end
