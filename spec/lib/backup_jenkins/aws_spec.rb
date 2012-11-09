@@ -8,7 +8,7 @@ describe BackupJenkins::AWS do
     BackupJenkins::Config.stub(:new).and_return(config)
 
     config.stub(:aws).and_return({ "access_key" => "some_key", "secret" => "some_secret" })
-    config.stub(:backup).and_return({ "backups_to_keep" => 2, "file_name_base" => "jenkins" })
+    config.stub(:backup).and_return({ "backups_to_keep" => { "remote" => 2 }, "file_name_base" => "jenkins" })
 
     ::AWS::S3.stub(:new).and_return(s3_mocks)
   end

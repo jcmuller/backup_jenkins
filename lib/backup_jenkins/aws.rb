@@ -54,7 +54,7 @@ module BackupJenkins
 
     # TODO change this to use a time decay algorithm
     def files_to_remove
-      files - files.last(config.backup["backups_to_keep"])
+      files - files.last(config.backup["backups_to_keep"]["remote"])
     end
 
     def files
