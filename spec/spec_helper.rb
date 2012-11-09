@@ -5,12 +5,14 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-require 'simplecov'
-require 'simplecov-rcov'
-SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
-SimpleCov.start do
-  add_filter "spec"
-  add_filter "vendor/bundler_gems"
+if ENV["COVERAGE"]
+  require 'simplecov'
+  require 'simplecov-rcov'
+  SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
+  SimpleCov.start do
+    add_filter "spec"
+    add_filter "vendor/bundler_gems"
+  end
 end
 
 require 'backup_jenkins'
