@@ -7,18 +7,7 @@ module BackupJenkins
     end
 
     def valid?
-      ! (
-        aws["access_key"].nil? ||
-        aws["secret"].nil? ||
-        aws["bucket_name"].nil? ||
-        backup["dir_base"].nil? ||
-        backup["file_name_base"].nil? ||
-        backup["backups_to_keep"].nil? ||
-        backup["backups_to_keep"]["remote"].nil? ||
-        backup["backups_to_keep"]["local"].nil? ||
-        jenkins["home"].nil? ||
-        verbose.nil?
-      )
+      !verbose.nil? && jenkins_valid? && aws_valid? && backup_valid?
     end
 
     def method_missing(meth, *args, &block)
@@ -65,6 +54,21 @@ module BackupJenkins
 
     def config_file_example_path
       File.expand_path('../../../config/config-example.yml', __FILE__)
+    end
+
+    def aws_valid?
+      aws["access_key"] && aws["secret"] && aws["bucket_name"]
+    end
+
+    def jenkins_valid?
+      !!jenkins["home"]
+    end
+
+    def backup_valid?
+      backup["dir_base"] && backup["file_name_base"] &&
+        backup["backups_to_keep"] &&
+        backup["backups_to_keep"]["remote"] &&
+        backup["backups_to_keep"]["local"]
     end
   end
 end
