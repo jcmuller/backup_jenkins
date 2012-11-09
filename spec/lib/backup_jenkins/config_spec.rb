@@ -39,7 +39,7 @@ describe BackupJenkins::Config do
     end
 
     it "should print some helpful text if config file doesn't exist" do
-      subject.should_receive(:config_file_path).twice.and_return("config")
+      subject.should_receive(:default_config_file_path).and_return("config")
 
       YAML.should_receive(:load_file).and_raise(Errno::ENOENT)
       File.should_receive(:read).and_return("sample")
@@ -47,7 +47,7 @@ describe BackupJenkins::Config do
       STDERR.should_receive(:puts).with("Please create a config file in config")
       STDERR.should_receive(:puts).with("\nIt should look like:\n\nsample")
 
-      expect{ subject.send(:config_file) }.to raise_error SystemExit
+      expect{ subject.send(:config_file, nil) }.to raise_error SystemExit
     end
   end
 
