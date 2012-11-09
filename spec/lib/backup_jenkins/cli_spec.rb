@@ -35,4 +35,16 @@ describe BackupJenkins::CLI do
     it { aws.should_receive(:remove_old_files) }
   end
 
+  describe "#longest_width" do
+    before { subject.stub(:options_possible).and_return([%w(1234), %w(1234567890), %w(123)]) }
+    it { subject.send(:longest_width).should == 10 }
+  end
+
+  describe "#expand_option" do
+    it {
+      subject.send(:expand_option, ['--this-option', '-t', 0, 'This is my explanation']).should(
+        eq "    --this-option, -t  This is my explanation"
+      )
+    }
+  end
 end
