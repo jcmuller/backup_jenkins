@@ -1,11 +1,14 @@
 require 'rubygems'
-require 'yaml'
 require 'aws'
+require 'getoptlong'
+require 'time'
+require 'yaml'
 
 module BackupJenkins
-  autoload :AWS,      'backup_jenkins/aws'
-  autoload :Backup,   'backup_jenkins/backup'
-  autoload :CLI,      'backup_jenkins/cli'
-  autoload :Config,   'backup_jenkins/config'
-  autoload :Version,  'backup_jenkins/version'
+  autoload :AWS,       'backup_jenkins/aws'
+  autoload :Backup,    'backup_jenkins/backup'
+  autoload :CLI,       'backup_jenkins/cli'
+  autoload :Config,    'backup_jenkins/config'
+  autoload :Formatter, 'backup_jenkins/formatter'
+  autoload :VERSION,   'backup_jenkins/version'
 end
