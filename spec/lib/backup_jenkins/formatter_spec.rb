@@ -5,13 +5,14 @@ class SpecFormatterIncluder
 
   attr_reader :config
 
-  def initialize
-    @config = BackupJenkins::Config.new
+  def initialize(config)
+    @config = config
   end
 end
 
 describe BackupJenkins::Formatter do
-  subject { SpecFormatterIncluder.new }
+  let(:config) { mock(:backup => { "file_name_base" => "jenkins" }) }
+  subject { SpecFormatterIncluder.new(config) }
 
   describe "#format_backup_file_data" do
     let(:files) {
