@@ -3,8 +3,8 @@ module BackupJenkins
     class << self
       def run
         cli = self.new
-        cli.check_config
         cli.parse_options
+        cli.check_config
         cli.run
       end
     end
