@@ -31,7 +31,7 @@ module BackupJenkins
           show_version
         end
       end
-    rescue GetoptLong::MissingArgument
+    rescue GetoptLong::MissingArgument, GetoptLong::InvalidOption
       # GetoptLong Already outputs the error.
       puts "\n"
       show_help
