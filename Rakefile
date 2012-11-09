@@ -7,7 +7,26 @@ require "bundler/gem_tasks"
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = "spec/**/*_spec.rb"
-  spec.rspec_opts = ["--backtrace --format CI::Reporter::RSpec"]
+end
+
+namespace :spec do
+  task :set_coverage do
+    ENV["COVERAGE"] = "true"
+  end
+
+  desc "Run with coverage"
+  task :rcov => :set_coverage do
+    Rake::Task[:spec].invoke
+  end
+
+  desc "Run for ci (with reports)"
+  RSpec::Core::RakeTask.new(:ci) do |spec|
+    spec.pattern = "spec/**/*_spec.rb"
+    spec.rspec_opts = ["--backtrace --format CI::Reporter::RSpec"]
+  end
+
+  desc "Run with coverage and reports"
+  task :rcov_and_ci => [:set_coverage, :ci]
 end
 
 desc "Clean backup and swap files, and artifacts"
