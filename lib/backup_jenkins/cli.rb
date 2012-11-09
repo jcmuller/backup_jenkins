@@ -3,8 +3,16 @@ module BackupJenkins
     class << self
       def run
         cli = self.new
+        cli.check_config
         cli.parse_options
         cli.run
+      end
+    end
+
+    def check_config
+      if !config.valid?
+        STDERR.puts "Config file is incorrect."
+        show_help
       end
     end
 

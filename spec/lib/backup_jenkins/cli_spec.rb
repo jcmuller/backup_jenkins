@@ -17,11 +17,34 @@ describe BackupJenkins::CLI do
 
     aws.stub(:upload_file)
     aws.stub(:remove_old_files)
+
+    config.stub(:valid?).and_return(true)
   end
 
   describe ".run" do
     after { BackupJenkins::CLI.run }
+
+    it { BackupJenkins::CLI.any_instance.should_receive(:check_config) }
+    it { BackupJenkins::CLI.any_instance.should_receive(:parse_options) }
     it { BackupJenkins::CLI.any_instance.should_receive(:run) }
+  end
+
+  describe "#check_config" do
+    it "doesn't show help" do
+      config.should_receive(:valid?).and_return(true)
+      subject.should_not_receive(:show_help)
+      STDERR.should_not_receive(:puts).with("Config file is incorrect.")
+
+      subject.check_config
+    end
+
+    it "shows help if config is invalid" do
+      config.should_receive(:valid?).and_return(false)
+      subject.should_receive(:show_help)
+      STDERR.should_receive(:puts).with("Config file is incorrect.")
+
+      subject.check_config
+    end
   end
 
   describe "#parse_options" do
