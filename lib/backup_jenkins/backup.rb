@@ -43,6 +43,19 @@ module BackupJenkins
 
       create_tarball
       remove_temporary_files
+    rescue Interrupt
+      puts "Cleaning up..."
+      clean_up
+    end
+
+    def clean_up
+      puts "Removing #{backup_directory}"
+      remove_temporary_files
+
+      puts "Removing #{tarball_filename}"
+      FileUtils.rm_rf(tarball_filename)
+    rescue Errno::ENOENT
+      puts e
     end
 
     def copy_files
