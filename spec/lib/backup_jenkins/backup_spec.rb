@@ -96,7 +96,6 @@ describe BackupJenkins::Backup do
       subject.stub(:tarball_filename).and_return("tarball")
       subject.stub(:backup_directory).and_return("directory")
 
-      STDOUT.should_receive(:puts).twice
       subject.should_receive(:remove_temporary_files)
       FileUtils.should_receive(:rm_rf).with("tarball")
 
@@ -106,7 +105,6 @@ describe BackupJenkins::Backup do
     it "should recover from file not found" do
       subject.stub(:backup_directory).and_return("directory")
       subject.should_receive(:remove_temporary_files).and_raise(Errno::ENOENT)
-      STDOUT.should_receive(:puts).twice
       subject.clean_up
     end
   end
@@ -191,7 +189,6 @@ describe BackupJenkins::Backup do
     it "should clean up if Interrupt" do
       subject.should_receive(:copy_files).and_raise(Interrupt)
       subject.should_receive(:clean_up)
-      STDOUT.should_receive(:puts)
       subject.do_backup
     end
   end
