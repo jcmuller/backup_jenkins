@@ -6,6 +6,21 @@ module BackupJenkins
       @config = config_file(path)
     end
 
+    def valid?
+      ! (
+        aws["access_key"].nil? ||
+        aws["secret"].nil? ||
+        aws["bucket_name"].nil? ||
+        backup["dir_base"].nil? ||
+        backup["file_name_base"].nil? ||
+        backup["backups_to_keep"].nil? ||
+        backup["backups_to_keep"]["remote"].nil? ||
+        backup["backups_to_keep"]["local"].nil? ||
+        jenkins["home"].nil? ||
+        verbose.nil?
+      )
+    end
+
     def method_missing(meth, *args, &block)
       return config[meth.to_s] if config.has_key?(meth.to_s)
       super

@@ -64,4 +64,56 @@ describe BackupJenkins::Config do
       subject.verbose.should be_false
     end
   end
+
+  describe "#valid?" do
+    let(:config) {
+      {
+        "aws" => {
+          "access_key" => "AWS_ACCESS_KEY",
+          "secret" => "AWS_SECRET",
+          "bucket_name" => "BUCKET_NAME"
+        },
+        "backup" => {
+          "dir_base" => "PATH_TO_BACKUP_DIRECTORY",
+          "file_name_base" => "SOME_BASE_NAME",
+          "backups_to_keep" => {
+            "remote" => 2,
+            "local" => 5
+          }
+        },
+        "jenkins" => {
+          "home" => "PATH_TO_JENKINS_HOME"
+        },
+        "verbose" => false
+      }
+    }
+
+    before do
+      YAML.stub(:load_file).and_return(config)
+    end
+
+    it "should make sure that the config loaded has the necessary options" do
+      should be_valid
+    end
+
+    it "should be valid if verbose is false" do
+      config["verbose"] = false
+      should be_valid
+    end
+
+    it "should not be valid if verbose option is missing" do
+      config.delete("verbose")
+      expect{ should_not be_valid }.to raise_error NameError
+    end
+
+    it "should not be valid if aws[access_key] option is missing" do
+      config["aws"].delete("access_key")
+      should_not be_valid
+    end
+
+    it "should not be valid if backup section is missing" do
+      config.delete("backup")
+      expect{ should_not be_valid }.to raise_error NameError
+    end
+  end
 end
