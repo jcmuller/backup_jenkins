@@ -58,18 +58,28 @@ module BackupJenkins
     end
 
     def run
-      backup.do_backup
-
-      full_filename = backup.tarball_filename
-      filename = File.basename(full_filename)
-
-      aws.upload_file(filename, File.open(full_filename)) unless @only_local
-      aws.remove_old_files # Clean up!
+      do_backup
+      upload_file unless @only_local
     rescue Interrupt
-      backup.clean_up
+      clean_up_backup
     end
 
     private
+
+    def do_backup
+      backup.do_backup
+    end
+
+    def upload_file
+      full_filename = backup.tarball_filename
+      filename = File.basename(full_filename)
+      aws.upload_file(filename, File.open(full_filename))
+      aws.remove_old_files # Clean up!
+    end
+
+    def clean_up_backup
+      backup.clean_up
+    end
 
     def config
       @config ||= BackupJenkins::Config.new
