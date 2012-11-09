@@ -19,11 +19,13 @@ describe BackupJenkins::CLI do
     aws.stub(:remove_old_files)
   end
 
-  after do
-    BackupJenkins::CLI.run
+  describe ".run" do
+    after { BackupJenkins::CLI.run }
+    it { BackupJenkins::CLI.any_instance.should_receive(:run) }
   end
 
-  describe ".run" do
+  describe "#run" do
+    after { subject.run }
     it { BackupJenkins::AWS.should_receive(:new).with(config) }
     it { BackupJenkins::Backup.should_receive(:new).with(config) }
     it { BackupJenkins::Config.should_receive(:new) }
@@ -32,4 +34,5 @@ describe BackupJenkins::CLI do
     it { aws.should_receive(:upload_file).with("tarball_filename", :IO) }
     it { aws.should_receive(:remove_old_files) }
   end
+
 end
