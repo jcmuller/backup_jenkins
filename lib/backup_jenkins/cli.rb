@@ -82,15 +82,15 @@ module BackupJenkins
     end
 
     def config
-      @config ||= BackupJenkins::Config.new
+      @config ||= Config.new
     end
 
     def aws
-      @aws ||= BackupJenkins::AWS.new(config)
+      @aws ||= AWS.new(config)
     end
 
     def backup
-      @backup ||= BackupJenkins::Backup.new(config)
+      @backup ||= Backup.new(config)
     end
 
     def options
@@ -131,7 +131,7 @@ module BackupJenkins
 
     def override_config_file_with(config_file_name)
       raise "File not found or not readable" unless File.readable?(config_file_name)
-      @config = BackupJenkins::Config.new(config_file_name)
+      @config = Config.new(config_file_name)
     end
 
     def override_config_file_with_option(options = {})
