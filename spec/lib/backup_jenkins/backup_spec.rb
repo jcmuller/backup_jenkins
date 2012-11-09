@@ -13,6 +13,23 @@ describe BackupJenkins::Backup do
     end
   end
 
+  describe "#backup_files" do
+    it "should get a listing for all the files in backup directory" do
+      file = "dir/base_1234"
+      config.stub(:backup).and_return("dir_base" => "dir")
+      config.stub(:base_file_name).and_return("base")
+
+      File.should_receive(:size).with(file).and_return("size")
+      Dir.should_receive(:[]).and_return([file])
+      subject.send(:backup_files).should == [
+        {
+          :key => "base_1234",
+          :content_length => "size"
+        }
+      ]
+    end
+  end
+
   describe "#backup_directory" do
     let(:backup) { { "dir_base" => "/path/to/some/dir_base" } }
 
@@ -71,6 +88,26 @@ describe BackupJenkins::Backup do
       subject.should_receive(:backup_files)
       subject.should_receive(:format_backup_file_data)
       subject.list_local_files
+    end
+  end
+
+  describe "#clean_up" do
+    it "should clean up" do
+      subject.stub(:tarball_filename).and_return("tarball")
+      subject.stub(:backup_directory).and_return("directory")
+
+      STDOUT.should_receive(:puts).twice
+      subject.should_receive(:remove_temporary_files)
+      FileUtils.should_receive(:rm_rf).with("tarball")
+
+      subject.clean_up
+    end
+
+    it "should recover from file not found" do
+      subject.stub(:backup_directory).and_return("directory")
+      subject.should_receive(:remove_temporary_files).and_raise(Errno::ENOENT)
+      STDOUT.should_receive(:puts).twice
+      subject.clean_up
     end
   end
 
@@ -148,6 +185,13 @@ describe BackupJenkins::Backup do
       it { subject.should_receive(:copy_files) }
       it { subject.should_receive(:create_tarball) }
       it { subject.should_receive(:remove_temporary_files) }
+    end
+
+    it "should clean up if Interrupt" do
+      subject.should_receive(:copy_files).and_raise(Interrupt)
+      subject.should_receive(:clean_up)
+      STDOUT.should_receive(:puts)
+      subject.do_backup
     end
   end
 
