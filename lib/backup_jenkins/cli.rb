@@ -145,28 +145,22 @@ module BackupJenkins
     end
 
     def license_file_path
-      File.expand_path("../../..//LICENSE", __FILE__)
-    end
-
-    def version_info
-      <<-EOV
-backup_jenkins (#{BackupJenkins::VERSION})
-https://github.com/jcmuller/backup_jenkins
-(c) 2012 Juan C. Muller
-Work on this has been proudly backed by ChallengePost, Inc.
-      EOV
+      File.expand_path("../../../LICENSE", __FILE__)
     end
 
     def help_info
       <<-EOH
 Usage: #{File.basename($0)} [options]
-  [#{options_possible.map{ |o| short_hand_option(o)}.join('], [')}]
+  #{short_hand_options}
 
   Options:
 #{option_details}
-
 #{version_info}
       EOH
+    end
+
+    def short_hand_options
+      "[#{options_possible.map{ |o| short_hand_option(o)}.join('], [')}]"
     end
 
     def short_hand_option(option)
@@ -181,6 +175,19 @@ Usage: #{File.basename($0)} [options]
       <<-EOO
 #{options_possible.map{ |o| expand_option(o) }.join("\n")}
       EOO
+    end
+
+    def version_info
+      <<-EOV
+backup_jenkins (#{version_number})
+https://github.com/jcmuller/backup_jenkins
+(c) 2012 Juan C. Muller
+Work on this has been proudly backed by ChallengePost, Inc.
+      EOV
+    end
+
+    def version_number
+      VERSION
     end
 
     def longest_width
