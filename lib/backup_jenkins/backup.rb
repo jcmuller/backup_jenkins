@@ -40,7 +40,6 @@ module BackupJenkins
       raise "Backup directory already exists! (#{backup_directory})" if FileTest.directory?(backup_directory)
 
       copy_files
-
       create_tarball
       remove_temporary_files
     rescue Interrupt
@@ -54,7 +53,7 @@ module BackupJenkins
 
       puts "Removing #{tarball_filename}"
       FileUtils.rm_rf(tarball_filename)
-    rescue Errno::ENOENT
+    rescue Errno::ENOENT => e
       puts e
     end
 
