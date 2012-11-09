@@ -104,7 +104,7 @@ describe BackupJenkins::Backup do
 
     it "should recover from file not found" do
       subject.stub(:backup_directory).and_return("directory")
-      subject.should_receive(:remove_temporary_files).and_raise(Errno::ENOENT)
+      subject.should_receive(:remove_temporary_files).and_raise(Errno::ENOENT.new)
       subject.clean_up
     end
   end
