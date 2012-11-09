@@ -102,7 +102,7 @@ module BackupJenkins
     attr_reader :config
 
     def timestamp
-      Time.now.strftime(config.backup["timestamp"])
+      Time.now.strftime("%Y%m%d_%H%M")
     end
 
     def backup_files
