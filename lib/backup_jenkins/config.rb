@@ -23,6 +23,10 @@ module BackupJenkins
       %x{hostname -s}.chomp
     end
 
+    def override(options = {})
+      @config.merge!(options)
+    end
+
     private
 
     attr_reader :config
