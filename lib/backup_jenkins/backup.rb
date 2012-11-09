@@ -42,9 +42,21 @@ module BackupJenkins
       copy_files
       create_tarball
       remove_temporary_files
+      remove_old_backups
     rescue Interrupt
       puts "Cleaning up..."
       clean_up
+    end
+
+    def remove_old_backups
+      files_to_remove.each do |file|
+        FileUtils.rm(file)
+      end
+    end
+
+    def files_to_remove
+      glob_of_backup_files -
+        glob_of_backup_files.last(config.backup["backups_to_keep"]["local"])
     end
 
     def clean_up

@@ -171,6 +171,7 @@ describe BackupJenkins::Backup do
       subject.stub(:backup_directory).and_return("backup_directory")
       subject.stub(:copy_files)
       subject.stub(:create_tarball)
+      subject.stub(:remove_old_backups)
       subject.stub(:remove_temporary_files)
     end
 
@@ -224,6 +225,28 @@ describe BackupJenkins::Backup do
       Dir.should_receive(:[]).with("home/plugins/*.jpi.disabled").and_return(["disabled"])
 
       subject.plugin_files.should == %w(jpi pinned disabled)
+    end
+  end
+
+  describe "#remove_old_backups" do
+    it "should remove the old files" do
+      subject.should_receive(:files_to_remove).and_return(['a_file'])
+      FileUtils.should_receive(:rm).with('a_file')
+
+      subject.remove_old_backups
+    end
+  end
+
+  describe "#files_to_remove" do
+    before do
+      config.stub(:backup).and_return("backups_to_keep" => { "local" => 2 })
+      subject.stub(:glob_of_backup_files).and_return(
+        %w(old_file_1 old_file_2 old_file_3 old_file_4 old_file_5)
+      )
+    end
+
+    it "should remove old files" do
+      subject.files_to_remove.should == %w(old_file_1 old_file_2 old_file_3)
     end
   end
 
