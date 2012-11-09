@@ -27,6 +27,20 @@ module BackupJenkins
       raise UploadFileError unless new_file.class == ::AWS::S3::S3Object
     end
 
+    def download_file(filename)
+      remote_file = bucket.objects[filename]
+
+      File.open(filename, 'w') do |file|
+        count = 0
+        remote_file.read do |chunk|
+          file.write(chunk)
+          print "." if count % 512 == 0
+          count += 1
+        end
+        puts "."
+      end
+    end
+
     private
 
     attr_reader :config, :bucket
