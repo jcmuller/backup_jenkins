@@ -112,6 +112,25 @@ describe BackupJenkins::CLI do
     end
   end
 
+  describe "#run" do
+    after { subject.run }
+
+    it { subject.should_receive(:do_backup) }
+    it { subject.should_receive(:upload_file) }
+
+    it "should not upload file if only_local is set" do
+      subject.instance_variable_set(:"@only_local", true)
+
+      subject.should_receive(:do_backup)
+      subject.should_not_receive(:upload_file)
+    end
+
+    it "should clean up" do
+      subject.should_receive(:do_backup).and_raise(Interrupt)
+      backup.should_receive(:clean_up)
+    end
+  end
+
   describe "#do_backup" do
     after { subject.send(:do_backup) }
 
@@ -129,31 +148,6 @@ describe BackupJenkins::CLI do
     it { aws.should_receive(:remove_old_files) }
   end
 
-  describe "#run" do
-    after { subject.run }
-
-    it { BackupJenkins::AWS.should_receive(:new).with(config) }
-    it { BackupJenkins::Backup.should_receive(:new).with(config) }
-    it { BackupJenkins::Config.should_receive(:new) }
-    it { backup.should_receive(:do_backup) }
-    it { backup.should_receive(:tarball_filename).and_return("tarball_filename") }
-    it { aws.should_receive(:upload_file).with("tarball_filename", :IO) }
-    it { aws.should_receive(:remove_old_files) }
-
-    it "should not upload file if only_local is set" do
-      subject.instance_variable_set(:"@only_local", true)
-
-      backup.should_receive(:do_backup)
-      backup.should_not_receive(:tarball_filename)
-      aws.should_not_receive(:upload_file)
-      aws.should_not_receive(:remove_old_files)
-    end
-
-    it "should clean up" do
-      backup.should_receive(:do_backup).and_raise(Interrupt)
-      backup.should_receive(:clean_up)
-    end
-  end
 
   describe "#show_help" do
     it "should call help info and exit" do
@@ -272,7 +266,7 @@ https://github.com/jcmuller/backup_jenkins
 (c) 2012 Juan C. Muller
 Work on this has been proudly backed by ChallengePost, Inc.
 
-       EOH
+      EOH
     end
   end
 
