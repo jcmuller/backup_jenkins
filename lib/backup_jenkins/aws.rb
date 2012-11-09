@@ -34,10 +34,10 @@ module BackupJenkins
         count = 0
         remote_file.read do |chunk|
           file.write(chunk)
-          print "." if count % 512 == 0
+          STDOUT.print "." if count % 512 == 0
           count += 1
         end
-        puts "."
+        STDOUT.puts "."
       end
     end
 
