@@ -16,7 +16,8 @@ module BackupJenkins
       end
 
       "".tap do |output|
-        by_host.each do |host, data|
+        by_host.keys.sort.each do |host|
+          data = by_host[host]
           output << host.capitalize << ":" << $/
           data.each do |datum|
             output << sprintf("  - %s key: %s (%0.2f MB)#{$/}", *datum)
