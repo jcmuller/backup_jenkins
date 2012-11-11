@@ -38,7 +38,8 @@ describe BackupJenkins::Backup do
       config.should_receive(:base_file_name).and_return("filename")
       subject.should_receive(:timestamp).and_return("timestamp")
 
-      subject.backup_directory.should == "/path/to/some/dir_base/filename_timestamp"
+      subject.send(:backup_directory).should ==
+        "/path/to/some/dir_base/filename_timestamp"
     end
 
     it "should get data only once" do
@@ -46,9 +47,9 @@ describe BackupJenkins::Backup do
       config.should_receive(:base_file_name).once.and_return("filename")
       subject.should_receive(:timestamp).once.and_return("timestamp")
 
-      subject.backup_directory
-      subject.backup_directory
-      subject.backup_directory
+      subject.send(:backup_directory)
+      subject.send(:backup_directory)
+      subject.send(:backup_directory)
     end
   end
 
@@ -61,7 +62,7 @@ describe BackupJenkins::Backup do
       subject.stub(:create_dir_and_copy)
     end
 
-    after { subject.copy_files }
+    after { subject.send(:copy_files) }
 
     it { subject.should_receive(:create_dir_and_copy).with("plugin_files") }
     it { subject.should_receive(:create_dir_and_copy).with("user_content_files") }
@@ -74,7 +75,7 @@ describe BackupJenkins::Backup do
       subject.should_receive(:create_dir_and_copy_impl).with("b")
       subject.should_receive(:create_dir_and_copy_impl).with("c")
 
-      subject.create_dir_and_copy(%w(a b c))
+      subject.send(:create_dir_and_copy, %w(a b c))
     end
   end
 
@@ -120,22 +121,22 @@ describe BackupJenkins::Backup do
 
     it "should get the new file path of the file" do
       subject.should_receive(:new_file_path)
-      subject.create_dir_and_copy_impl("filename")
+      subject.send(:create_dir_and_copy_impl, "filename")
     end
 
     it "should create directory new_directory" do
       FileUtils.should_receive(:mkdir_p).with("/this/is/a/new/path", :verbose => false)
-      subject.create_dir_and_copy_impl("filename")
+      subject.send(:create_dir_and_copy_impl, "filename")
     end
 
     it "should copy old file to new file" do
       FileUtils.should_receive(:cp).with("filename", "/this/is/a/new/path/to_file", :verbose => false)
-      subject.create_dir_and_copy_impl("filename")
+      subject.send(:create_dir_and_copy_impl, "filename")
     end
 
     it "should raise error if file to copy from doesn't exist" do
       FileTest.should_receive(:file?).and_return(false)
-      expect{ subject.create_dir_and_copy_impl("filename") }.to raise_error
+      expect{ subject.send(:create_dir_and_copy_impl, "filename") }.to raise_error
     end
   end
 
@@ -152,14 +153,14 @@ describe BackupJenkins::Backup do
     end
 
     context do
-      after { subject.create_tarball }
+      after { subject.send(:create_tarball) }
       it { Dir.should_receive(:chdir).with("directory") }
       it { subject.should_receive(:`).with("tar options directory.tar.bz2 .") }
     end
 
     it "should raise error if file doesn't exist" do
       FileTest.should_receive(:file?).and_return(false)
-      expect{ subject.create_tarball }.to raise_error
+      expect{ subject.send(:create_tarball) }.to raise_error
     end
   end
 
@@ -200,7 +201,7 @@ describe BackupJenkins::Backup do
       subject.should_receive(:`).
         with("find home/jobs -maxdepth 3 -name config.xml -or -name nextBuildNumber").
         and_return("file1\nfile2\nfile3")
-      subject.jobs_files.should == %w(file1 file2 file3)
+      subject.send(:jobs_files).should == %w(file1 file2 file3)
     end
   end
 
@@ -209,7 +210,8 @@ describe BackupJenkins::Backup do
       subject.should_receive(:backup_directory).and_return("backup_directory")
       config.should_receive(:jenkins).and_return({ "home" => "some_nice_house"})
 
-      subject.new_file_path("some_nice_house/and/then/a/room").should == "backup_directory/and/then/a/room"
+      subject.send(:new_file_path, "some_nice_house/and/then/a/room").should ==
+        "backup_directory/and/then/a/room"
     end
   end
 
@@ -221,7 +223,7 @@ describe BackupJenkins::Backup do
       Dir.should_receive(:[]).with("home/plugins/*.jpi.pinned").and_return(["pinned"])
       Dir.should_receive(:[]).with("home/plugins/*.jpi.disabled").and_return(["disabled"])
 
-      subject.plugin_files.should == %w(jpi pinned disabled)
+      subject.send(:plugin_files).should == %w(jpi pinned disabled)
     end
   end
 
@@ -230,7 +232,7 @@ describe BackupJenkins::Backup do
       subject.should_receive(:files_to_remove).and_return(['a_file'])
       FileUtils.should_receive(:rm).with('a_file')
 
-      subject.remove_old_backups
+      subject.send(:remove_old_backups)
     end
   end
 
@@ -243,7 +245,7 @@ describe BackupJenkins::Backup do
     end
 
     it "should remove old files" do
-      subject.files_to_remove.should == %w(old_file_1 old_file_2 old_file_3)
+      subject.send(:files_to_remove).should == %w(old_file_1 old_file_2 old_file_3)
     end
   end
 
@@ -253,19 +255,19 @@ describe BackupJenkins::Backup do
       config.stub(:verbose).and_return(false)
     end
 
-    after { subject.remove_temporary_files }
+    after { subject.send(:remove_temporary_files) }
     it { FileUtils.should_receive(:rm_rf).with("backup_directory", :verbose => false) }
   end
 
   describe "#tar_options" do
     it "should be jcf" do
       config.should_receive(:verbose).and_return(false)
-      subject.tar_options == "jcf"
+      subject.send(:tar_options) == "jcf"
     end
 
     it "should be vjcf" do
       config.should_receive(:verbose).and_return(true)
-      subject.tar_options == "vjcf"
+      subject.send(:tar_options) == "vjcf"
     end
   end
 
@@ -287,7 +289,7 @@ describe BackupJenkins::Backup do
 
     it "should return files inside the userContent directory" do
       Dir.should_receive(:[]).with("home/userContent/*").and_return(["my_file"])
-      subject.user_content_files.should == %w(my_file)
+      subject.send(:user_content_files).should == %w(my_file)
     end
   end
 end

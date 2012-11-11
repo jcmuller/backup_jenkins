@@ -8,18 +8,58 @@ module BackupJenkins
       @config = config
     end
 
+    def do_backup
+      raise "Backup directory already exists! (#{backup_directory})" if FileTest.directory?(backup_directory)
+
+      copy_files
+      create_tarball
+      remove_temporary_files
+      remove_old_backups
+    rescue Interrupt
+      puts "Cleaning up..."
+      clean_up
+    end
+
+    def tarball_filename
+      "#{backup_directory}.tar.bz2"
+    end
+
+    def list_local_files
+      format_backup_file_data(backup_files)
+    end
+
+    def clean_up
+      puts "Removing #{backup_directory}"
+      remove_temporary_files
+
+      puts "Removing #{tarball_filename}"
+      FileUtils.rm_rf(tarball_filename)
+    rescue Errno::ENOENT => e
+      puts e
+    end
+
+    private
+
+    attr_reader :config
+
     def backup_directory
       @backup_directory ||= "#{config.backup["dir_base"]}/#{config.base_file_name}_#{timestamp}"
+    end
+
+    def timestamp
+      Time.now.strftime("%Y%m%d_%H%M")
+    end
+
+    def copy_files
+      create_dir_and_copy(plugin_files)
+      create_dir_and_copy(user_content_files)
+      create_dir_and_copy(jobs_files)
     end
 
     def create_dir_and_copy(file_names)
       file_names.each do |file_name|
         create_dir_and_copy_impl(file_name)
       end
-    end
-
-    def list_local_files
-      format_backup_file_data(backup_files)
     end
 
     def create_dir_and_copy_impl(file_name)
@@ -34,45 +74,6 @@ module BackupJenkins
 
     def new_file_path(file_name)
       "#{backup_directory}/#{file_name.gsub(%r{#{config.jenkins["home"]}}, "")}".gsub(%r{//}, '/')
-    end
-
-    def do_backup
-      raise "Backup directory already exists! (#{backup_directory})" if FileTest.directory?(backup_directory)
-
-      copy_files
-      create_tarball
-      remove_temporary_files
-      remove_old_backups
-    rescue Interrupt
-      puts "Cleaning up..."
-      clean_up
-    end
-
-    def remove_old_backups
-      files_to_remove.each do |file|
-        FileUtils.rm(file)
-      end
-    end
-
-    def files_to_remove
-      glob_of_backup_files -
-        glob_of_backup_files.last(config.backup["backups_to_keep"]["local"])
-    end
-
-    def clean_up
-      puts "Removing #{backup_directory}"
-      remove_temporary_files
-
-      puts "Removing #{tarball_filename}"
-      FileUtils.rm_rf(tarball_filename)
-    rescue Errno::ENOENT => e
-      puts e
-    end
-
-    def copy_files
-      create_dir_and_copy(plugin_files)
-      create_dir_and_copy(user_content_files)
-      create_dir_and_copy(jobs_files)
     end
 
     def plugin_files
@@ -95,26 +96,25 @@ module BackupJenkins
       raise "Error creating tarball" unless FileTest.file?(tarball_filename)
     end
 
-    def remove_temporary_files
-      FileUtils.rm_rf(backup_directory, :verbose => config.verbose)
-    end
-
-    def tarball_filename
-      "#{backup_directory}.tar.bz2"
-    end
-
     def tar_options
       %w(j c f).tap do |options|
         options.unshift('v') if config.verbose
       end.join('')
     end
 
-    private
+    def remove_old_backups
+      files_to_remove.each do |file|
+        FileUtils.rm(file)
+      end
+    end
 
-    attr_reader :config
+    def files_to_remove
+      glob_of_backup_files -
+        glob_of_backup_files.last(config.backup["backups_to_keep"]["local"])
+    end
 
-    def timestamp
-      Time.now.strftime("%Y%m%d_%H%M")
+    def glob_of_backup_files
+      Dir["#{config.backup["dir_base"]}/#{config.base_file_name}_*tar.bz2"]
     end
 
     def backup_files
@@ -126,8 +126,8 @@ module BackupJenkins
       end
     end
 
-    def glob_of_backup_files
-      Dir["#{config.backup["dir_base"]}/#{config.base_file_name}_*tar.bz2"]
+    def remove_temporary_files
+      FileUtils.rm_rf(backup_directory, :verbose => config.verbose)
     end
   end
 end
