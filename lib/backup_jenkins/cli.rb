@@ -9,13 +9,6 @@ module BackupJenkins
       end
     end
 
-    def check_config
-      if !config.valid?
-        STDERR.puts "Config file is incorrect."
-        show_help
-      end
-    end
-
     def parse_options
       options.each do |opt, arg|
         case opt
@@ -45,6 +38,22 @@ module BackupJenkins
       show_help
     end
 
+    def check_config
+      if !config.valid?
+        STDERR.puts "Config file is incorrect."
+        show_help
+      end
+    end
+
+    def run
+      do_backup
+      upload_file unless @only_local
+    rescue Interrupt
+      clean_up_backup
+    end
+
+    private
+
     def options_possible
       [
         [
@@ -64,15 +73,6 @@ module BackupJenkins
         ['--version', '-V', GetoptLong::NO_ARGUMENT, 'Print version number and exit,']
       ]
     end
-
-    def run
-      do_backup
-      upload_file unless @only_local
-    rescue Interrupt
-      clean_up_backup
-    end
-
-    private
 
     def do_backup
       backup.do_backup
