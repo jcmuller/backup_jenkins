@@ -2,6 +2,7 @@ module BackupJenkins
   module Formatter
 
     # Assumes that filenames are ordered already.
+    #
     # Requires a structure like:
     # [
     #   { :key => "jenkins_berman_20121107_1721.tar.bz2", :content_length => 88762813 },
@@ -13,6 +14,8 @@ module BackupJenkins
     end
 
     private
+
+    BYTES_IN_MBYTE = 2.0 ** 20
 
     class EntryFormatter
       def initialize(entry)
@@ -30,16 +33,16 @@ module BackupJenkins
 
     class DataFormatter
       def initialize(data)
-        @datums = data.map{ |entry| EntryFormatter.new(entry) }
+        @entries = data.map{ |entry| EntryFormatter.new(entry) }
       end
 
       def to_s
-        datums.map(&:to_s).join
+        entries.map(&:to_s).join
       end
 
       private
 
-      attr_reader :datums
+      attr_reader :entries
     end
 
     def build_structure_by_host(file_hashes)
@@ -47,9 +50,13 @@ module BackupJenkins
         file_hashes.each do |file_hash|
           (date, host, key) = extract_data_from_filename(file_hash[:key])
           by_host[host] ||= []
-          by_host[host].push([date, key, file_hash[:content_length] / 2.0**20])
+          by_host[host].push([date, key, bytes_to_mb(file_hash[:content_length])])
         end
       end
+    end
+
+    def bytes_to_mb(bytes)
+      bytes / BYTES_IN_MBYTE
     end
 
     def extract_data_from_filename(filename)
