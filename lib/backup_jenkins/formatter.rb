@@ -27,6 +27,8 @@ module BackupJenkins
       end
     end
 
+    private
+
     def extract_data_from_filename(filename)
       sans_base = filename.gsub(/#{config.backup["file_name_base"]}_/, '').gsub(/\.tar\.bz2/, '')
       (hostname, date, time) = sans_base.split("_")
