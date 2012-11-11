@@ -24,7 +24,7 @@ describe BackupJenkins::Config do
   end
 
   describe "#hostname" do
-    after { subject.hostname.should == 'hostname' }
+    after { subject.send(:hostname).should == 'hostname' }
     it { subject.should_receive(:`).with("hostname -s").and_return("hostname\n") }
   end
 

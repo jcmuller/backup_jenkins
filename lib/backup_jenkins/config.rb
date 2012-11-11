@@ -10,21 +10,8 @@ module BackupJenkins
       !verbose.nil? && jenkins_valid? && aws_valid? && backup_valid?
     end
 
-    def method_missing(meth, *args, &block)
-      return config[meth.to_s] if config.has_key?(meth.to_s)
-      super
-    end
-
-    def respond_to?(meth)
-      config.has_key?(meth.to_s) || super
-    end
-
     def base_file_name
       "#{backup["file_name_base"]}_#{hostname}"
-    end
-
-    def hostname
-      %x{hostname -s}.chomp
     end
 
     def override(options = {})
@@ -35,6 +22,10 @@ module BackupJenkins
 
     attr_reader :config
 
+    def default_config_file_path
+      "#{ENV['HOME']}/.config/backup_jenkins/config.yml"
+    end
+
     def config_file(config_file_path)
       YAML.load_file(config_file_path)
     rescue Errno::ENOENT
@@ -42,10 +33,6 @@ module BackupJenkins
       STDERR.puts "\nIt should look like:\n\n#{config_file_example}"
 
       exit 1
-    end
-
-    def default_config_file_path
-      "#{ENV['HOME']}/.config/backup_jenkins/config.yml"
     end
 
     def config_file_example
@@ -69,6 +56,19 @@ module BackupJenkins
         backup["backups_to_keep"] &&
         backup["backups_to_keep"]["remote"] &&
         backup["backups_to_keep"]["local"]
+    end
+
+    def hostname
+      %x{hostname -s}.chomp
+    end
+
+    def method_missing(meth, *args, &block)
+      return config[meth.to_s] if config.has_key?(meth.to_s)
+      super
+    end
+
+    def respond_to?(meth)
+      config.has_key?(meth.to_s) || super
     end
   end
 end
