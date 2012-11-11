@@ -90,6 +90,7 @@ module BackupJenkins
     end
 
     def create_tarball
+      puts "Creating #{tarball_filename}..." if config.verbose
       Dir.chdir(backup_directory)
       %x{tar #{tar_options} #{tarball_filename} .}
       raise "Error creating tarball" unless FileTest.file?(tarball_filename)
