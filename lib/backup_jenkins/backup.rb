@@ -34,8 +34,7 @@ module BackupJenkins
 
       puts "Removing #{tarball_filename}"
       FileUtils.rm_rf(tarball_filename)
-    rescue Errno::ENOENT => e
-      puts e
+    rescue Errno::ENOENT
     end
 
     private

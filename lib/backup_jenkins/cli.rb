@@ -50,6 +50,7 @@ module BackupJenkins
       upload_file unless @only_local
     rescue Interrupt
       clean_up_backup
+      exit 0
     end
 
     private

@@ -113,21 +113,25 @@ describe BackupJenkins::CLI do
   end
 
   describe "#run" do
-    after { subject.run }
+    context do
+      after { subject.run }
 
-    it { subject.should_receive(:do_backup) }
-    it { subject.should_receive(:upload_file) }
+      it { subject.should_receive(:do_backup) }
+      it { subject.should_receive(:upload_file) }
 
-    it "should not upload file if only_local is set" do
-      subject.instance_variable_set(:"@only_local", true)
+      it "should not upload file if only_local is set" do
+        subject.instance_variable_set(:"@only_local", true)
 
-      subject.should_receive(:do_backup)
-      subject.should_not_receive(:upload_file)
+        subject.should_receive(:do_backup)
+        subject.should_not_receive(:upload_file)
+      end
     end
 
     it "should clean up" do
       subject.should_receive(:do_backup).and_raise(Interrupt)
       backup.should_receive(:clean_up)
+
+      expect{ subject.run }.to raise_error SystemExit
     end
   end
 
