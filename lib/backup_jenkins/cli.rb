@@ -9,6 +9,9 @@ module BackupJenkins
       end
     end
 
+    # TODO Some options depend on the config file being correct. Some other
+    # options exit. Mark different options with whether they do one thing or
+    # another.
     def parse_options
       options.each do |opt, arg|
         case opt
