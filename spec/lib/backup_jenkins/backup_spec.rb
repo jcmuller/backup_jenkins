@@ -16,7 +16,7 @@ describe BackupJenkins::Backup do
   describe "#backup_files" do
     it "should get a listing for all the files in backup directory" do
       file = "dir/base_1234"
-      config.stub(:backup).and_return("dir_base" => "dir")
+      config.stub_chain(:backup, :dir_base).and_return("dir")
       config.stub(:base_file_name).and_return("base")
 
       File.should_receive(:size).with(file).and_return("size")
@@ -31,7 +31,7 @@ describe BackupJenkins::Backup do
   end
 
   describe "#backup_directory" do
-    let(:backup) { { "dir_base" => "/path/to/some/dir_base" } }
+    let(:backup) { mock(:dir_base => "/path/to/some/dir_base") }
 
     it "should return the dir base + the base file name + time stamp" do
       config.should_receive(:backup).and_return(backup)
@@ -81,7 +81,7 @@ describe BackupJenkins::Backup do
 
   describe "#list_local_files" do
     before do
-      config.stub(:backup).and_return("dir_base" => "base")
+      config.stub_chain(:backup, :dir_base).and_return("base")
       config.stub(:base_file_name).and_return("base_file_name")
     end
 
@@ -195,7 +195,7 @@ describe BackupJenkins::Backup do
   end
 
   describe "#jobs_files" do
-    before { config.stub(:jenkins).and_return({ "home" => "home" }) }
+    before { config.stub_chain(:jenkins, :home).and_return("home") }
 
     it "should return the config.xml and nextBuildNumber files in job directories" do
       subject.should_receive(:`).
@@ -208,7 +208,7 @@ describe BackupJenkins::Backup do
   describe "#new_file_path" do
     it "should return backup_directory/something" do
       subject.should_receive(:backup_directory).and_return("backup_directory")
-      config.should_receive(:jenkins).and_return({ "home" => "some_nice_house"})
+      config.should_receive(:jenkins).and_return(mock(:home => "some_nice_house"))
 
       subject.send(:new_file_path, "some_nice_house/and/then/a/room").should ==
         "backup_directory/and/then/a/room"
@@ -216,7 +216,7 @@ describe BackupJenkins::Backup do
   end
 
   describe "#plugin_files" do
-    before { config.stub(:jenkins).and_return({ "home" => "home" }) }
+    before { config.stub_chain(:jenkins, :home).and_return("home") }
 
     it "returns a collection of directories including all the files that have .jpi" do
       Dir.should_receive(:[]).with("home/plugins/*.jpi").and_return(["jpi"])
@@ -238,7 +238,7 @@ describe BackupJenkins::Backup do
 
   describe "#files_to_remove" do
     before do
-      config.stub(:backup).and_return("backups_to_keep" => { "local" => 2 })
+      config.stub_chain(:backup, :backups_to_keep, :local).and_return(2)
       subject.stub(:glob_of_backup_files).and_return(
         %w(old_file_1 old_file_2 old_file_3 old_file_4 old_file_5)
       )
@@ -278,14 +278,13 @@ describe BackupJenkins::Backup do
 
   describe "#timestamp" do
     it "should return the current time with the desired timestamp from the config" do
-      config.stub(:backup).and_return("timestamp" => "%Y%m%d_%H%M")
       Time.stub(:now).and_return(Time.parse("2013/01/01 12:34PM"))
       subject.send(:timestamp).should == "20130101_1234"
     end
   end
 
   describe "#user_content_files" do
-    before { config.stub(:jenkins).and_return({ "home" => "home" }) }
+    before { config.stub_chain(:jenkins, :home).and_return("home") }
 
     it "should return files inside the userContent directory" do
       Dir.should_receive(:[]).with("home/userContent/*").and_return(["my_file"])

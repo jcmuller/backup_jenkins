@@ -16,5 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = BackupJenkins::VERSION
 
   gem.add_dependency("aws-sdk")
+  gem.add_dependency("hashie")
+
   gem.add_development_dependency("rake")
 end

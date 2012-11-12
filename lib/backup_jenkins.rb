@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'aws'
 require 'getoptlong'
+require 'hashie'
 require 'time'
 require 'yaml'
 

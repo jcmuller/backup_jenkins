@@ -42,7 +42,7 @@ module BackupJenkins
     attr_reader :config
 
     def backup_directory
-      @backup_directory ||= "#{config.backup["dir_base"]}/#{config.base_file_name}_#{timestamp}"
+      @backup_directory ||= "#{config.backup.dir_base}/#{config.base_file_name}_#{timestamp}"
     end
 
     def timestamp
@@ -72,21 +72,21 @@ module BackupJenkins
     end
 
     def new_file_path(file_name)
-      "#{backup_directory}/#{file_name.gsub(%r{#{config.jenkins["home"]}}, "")}".gsub(%r{//}, '/')
+      "#{backup_directory}/#{file_name.gsub(%r{#{config.jenkins.home}}, "")}".gsub(%r{//}, '/')
     end
 
     def plugin_files
-      Dir["#{config.jenkins["home"]}/plugins/*.jpi"] +
-        Dir["#{config.jenkins["home"]}/plugins/*.jpi.pinned"] +
-        Dir["#{config.jenkins["home"]}/plugins/*.jpi.disabled"]
+      Dir["#{config.jenkins.home}/plugins/*.jpi"] +
+        Dir["#{config.jenkins.home}/plugins/*.jpi.pinned"] +
+        Dir["#{config.jenkins.home}/plugins/*.jpi.disabled"]
     end
 
     def user_content_files
-      Dir["#{config.jenkins["home"]}/userContent/*"]
+      Dir["#{config.jenkins.home}/userContent/*"]
     end
 
     def jobs_files
-      `find #{config.jenkins["home"]}/jobs -maxdepth 3 -name config.xml -or -name nextBuildNumber`.split(/\n/)
+      `find #{config.jenkins.home}/jobs -maxdepth 3 -name config.xml -or -name nextBuildNumber`.split(/\n/)
     end
 
     def create_tarball
@@ -110,17 +110,17 @@ module BackupJenkins
 
     def files_to_remove
       glob_of_backup_files -
-        glob_of_backup_files.last(config.backup["backups_to_keep"]["local"])
+        glob_of_backup_files.last(config.backup.backups_to_keep.local)
     end
 
     def glob_of_backup_files
-      Dir["#{config.backup["dir_base"]}/#{config.base_file_name}_*tar.bz2"]
+      Dir["#{config.backup.dir_base}/#{config.base_file_name}_*tar.bz2"]
     end
 
     def backup_files
       glob_of_backup_files.sort.map do |file|
         {
-          :key => file.gsub(%r{#{config.backup["dir_base"]}/}, ''),
+          :key => file.gsub(%r{#{config.backup.dir_base}/}, ''),
           :content_length => File.size(file)
         }
       end

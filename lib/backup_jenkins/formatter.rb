@@ -60,7 +60,7 @@ module BackupJenkins
     end
 
     def extract_data_from_filename(filename)
-      sans_base = filename.gsub(/#{config.backup["file_name_base"]}_/, '').gsub(/\.tar\.bz2/, '')
+      sans_base = filename.gsub(/#{config.backup.file_name_base}_/, '').gsub(/\.tar\.bz2/, '')
       (hostname, date, time) = sans_base.split("_")
       formatted_date = Time.parse(date << time).strftime("%Y/%m/%d %H:%M")
       [formatted_date, hostname, filename]

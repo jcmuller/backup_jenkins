@@ -54,7 +54,7 @@ module BackupJenkins
 
     # TODO change this to use a time decay algorithm
     def files_to_remove
-      files - files.last(config.backup["backups_to_keep"]["remote"])
+      files - files.last(config.backup.backups_to_keep.remote)
     end
 
     def files
@@ -66,20 +66,20 @@ module BackupJenkins
     end
 
     def backup_files_for_all_hosts
-      s3_files.with_prefix(config.backup["file_name_base"])
+      s3_files.with_prefix(config.backup.file_name_base)
     end
 
     def setup_aws
       s3 = initialize_s3_object
-      @bucket = s3.buckets[config.aws["bucket_name"]]
-      @bucket = s3.buckets.create(config.aws["bucket_name"]) unless @bucket.exists?
+      @bucket = s3.buckets[config.aws.bucket_name]
+      @bucket = s3.buckets.create(config.aws.bucket_name) unless @bucket.exists?
       raise "Couldn't create bucket!" unless @bucket.exists?
     end
 
     def initialize_s3_object
       ::AWS::S3.new(
-        :access_key_id => config.aws["access_key"],
-        :secret_access_key => config.aws["secret"]
+        :access_key_id => config.aws.access_key,
+        :secret_access_key => config.aws.secret
       )
     end
 

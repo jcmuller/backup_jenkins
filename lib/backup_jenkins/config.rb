@@ -3,7 +3,7 @@ module BackupJenkins
     attr_reader :s3
 
     def initialize(path = default_config_file_path)
-      @config = config_file(path)
+      @config = Hashie::Mash.new(config_file(path))
     end
 
     def valid?
@@ -11,7 +11,7 @@ module BackupJenkins
     end
 
     def base_file_name
-      "#{backup["file_name_base"]}_#{hostname}"
+      "#{backup.file_name_base}_#{hostname}"
     end
 
     def override(options = {})
@@ -44,18 +44,21 @@ module BackupJenkins
     end
 
     def aws_valid?
-      aws["access_key"] && aws["secret"] && aws["bucket_name"]
+      aws.access_key &&
+        aws.secret &&
+        aws.bucket_name
     end
 
     def jenkins_valid?
-      !!jenkins["home"]
+      !!jenkins.home
     end
 
     def backup_valid?
-      backup["dir_base"] && backup["file_name_base"] &&
-        backup["backups_to_keep"] &&
-        backup["backups_to_keep"]["remote"] &&
-        backup["backups_to_keep"]["local"]
+      backup.dir_base &&
+        backup.file_name_base &&
+        backup.backups_to_keep &&
+        backup.backups_to_keep.remote &&
+        backup.backups_to_keep.local
     end
 
     def hostname

@@ -1,26 +1,30 @@
 require 'spec_helper'
 
 describe BackupJenkins::AWS do
-  let(:config) { stub }
-  let(:s3_mocks) { stub(:buckets => stub(:[] => stub(:exists? => true), :create => true)) }
+  let(:config) { stub(:aws => aws, :backup => backup) }
+  let(:s3_mocks) {
+    stub(:buckets => stub(:[] => stub(:exists? => true), :create => true))
+  }
+  let(:aws) {
+    stub(
+      :access_key => "some_key",
+      :secret => "some_secret",
+      :bucket_name => "some_bucket"
+    )
+  }
+  let(:backup) {
+    stub(:backups_to_keep => stub(:remote => 2), :file_name_base => "jenkins")
+  }
 
   before do
     BackupJenkins::Config.stub(:new).and_return(config)
-
-    config.stub(:aws).and_return({ "access_key" => "some_key", "secret" => "some_secret" })
-    config.stub(:backup).and_return({ "backups_to_keep" => { "remote" => 2 }, "file_name_base" => "jenkins" })
-
     ::AWS::S3.stub(:new).and_return(s3_mocks)
   end
 
   describe "#setup_aws" do
-    after do
-      subject
-    end
+    after { subject }
 
-    it "should instantiate an S3 object" do
-      ::AWS::S3.should_receive(:new).and_return(s3_mocks)
-    end
+    it { ::AWS::S3.should_receive(:new).and_return(s3_mocks) }
 
     it "shuld create bucket" do
       s3_mocks.buckets.should_receive(:[]).and_return(mock(:exists? => false))
@@ -53,7 +57,7 @@ describe BackupJenkins::AWS do
 
   describe "#backup_files_for_all_hosts" do
     it "should return the right files" do
-      config.should_receive(:backup).and_return("file_name_base" => "base_file_name")
+      config.should_receive(:backup).and_return(mock(:file_name_base => "base_file_name"))
       objects = mock
       objects.should_receive(:with_prefix).with("base_file_name").and_return([1, 2, 3])
       subject.should_receive(:s3_files).and_return(objects)

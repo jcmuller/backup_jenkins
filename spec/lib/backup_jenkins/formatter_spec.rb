@@ -11,7 +11,7 @@ class SpecFormatterIncluder
 end
 
 describe BackupJenkins::Formatter do
-  let(:config) { mock(:backup => { "file_name_base" => "jenkins" }) }
+  let(:config) { mock(:backup => mock(:file_name_base => "jenkins")) }
   subject { SpecFormatterIncluder.new(config) }
 
   describe "#format_backup_file_data" do

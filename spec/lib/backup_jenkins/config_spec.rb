@@ -30,8 +30,8 @@ describe BackupJenkins::Config do
 
   describe "#config_file" do
     it "should load file" do
-      YAML.should_receive(:load_file).and_return("configuration")
-      subject.instance_variable_get(:"@config").should == "configuration"
+      YAML.should_receive(:load_file).and_return({ :a => :b })
+      subject.instance_variable_get(:"@config").should == Hashie::Mash.new({ :a => :b })
     end
 
     it "should exit with non 0 on error" do
