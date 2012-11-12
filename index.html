@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.8.3
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!" + escape(window.location.href);
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'><h1>BackupJenkins</h1>
+
+<p><a href="http://travis-ci.org/jcmuller/backup_jenkins"><img src="https://secure.travis-ci.org/jcmuller/backup_jenkins.png" alt="Build Status"></a>
+<a href="https://codeclimate.com/github/jcmuller/backup_jenkins"><img src="https://codeclimate.com/badge.png" alt="Code Climate"></a>
+<a href="https://gemnasium.com/jcmuller/backup_jenkins"><img src="https://gemnasium.com/jcmuller/backup_jenkins.png" alt="Dependency Status"></a></p>
+
+<p>This gem provides <code>backup_jenkins</code>, which provided with a correctly configured <code>config.yml</code>
+located on <code>~/.config/backup_jenkins/</code> will backup your job configurations, next build number,
+global configuration and plugins up to your Amazon AWS S3 account.</p>
+
+<h3>Prerequisites</h3>
+
+<ul>
+<li>Amazon AWS S3 account (you need to provide the user and secret keys)</li>
+<li>Jenkins installation</li>
+<li>Backup volume with lots of space</li>
+</ul>
+
+<h2>Installation</h2>
+
+<pre class="code ruby"><code>$ gem install backup_jenkins
+</code></pre>
+
+<h2>Usage</h2>
+
+<pre class="code ruby"><code>$ backup_jenkins
+</code></pre>
+
+<p>The first time you run <code>backup_jenkins</code>, it shows you a sample configuration file which you
+should copy into the appropriate location and fill in with your information.</p>
+
+<h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am &#39;Added some feature&#39;</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+</div></div>
+
+    <div id="footer">
+  Generated on Mon Nov 12 12:03:45 2012 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.3 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>
