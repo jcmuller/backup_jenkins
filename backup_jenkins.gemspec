@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency("aws-sdk")
   gem.add_dependency("hashie")
+  gem.add_dependency("command_line_helper")
 
   gem.add_development_dependency("rake")
   gem.add_development_dependency("guard")

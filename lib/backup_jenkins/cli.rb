@@ -1,5 +1,9 @@
+require 'command_line_helper'
+
 module BackupJenkins
   class CLI
+    include CommandLineHelper::HelpText
+
     class << self
       def run
         cli = self.new
@@ -160,35 +164,6 @@ module BackupJenkins
       File.expand_path("../../../LICENSE", __FILE__)
     end
 
-    def help_info
-      <<-EOH
-Usage: #{File.basename($0)} [options]
-  #{short_hand_options}
-
-  Options:
-#{option_details}
-#{version_info}
-      EOH
-    end
-
-    def short_hand_options
-      "[#{options_possible.map{ |o| short_hand_option(o)}.join('], [')}]"
-    end
-
-    def short_hand_option(option)
-      if option[2] == GetoptLong::REQUIRED_ARGUMENT
-        [option[0], option[1]].join('|') << " argument"
-      else
-        [option[0], option[1]].join('|')
-      end
-    end
-
-    def option_details
-      <<-EOO
-#{options_possible.map{ |o| expand_option(o) }.join("\n")}
-      EOO
-    end
-
     def version_info
       <<-EOV
 backup_jenkins (#{version_number})
@@ -202,12 +177,5 @@ Work on this has been proudly backed by ChallengePost, Inc.
       VERSION
     end
 
-    def longest_width
-      @max_width ||= options_possible.map{ |o| o[0] }.max{ |a, b| a.length <=> b.length }.length
-    end
-
-    def expand_option(option)
-      sprintf("    %-#{longest_width + 6}s %s", option.first(2).join(', '), option[3])
-    end
   end
 end

@@ -274,31 +274,6 @@ Work on this has been proudly backed by ChallengePost, Inc.
     end
   end
 
-  describe "#option_details" do
-    it "should return nice things" do
-      subject.stub(:options_possible).and_return(
-        [
-          ['--foo', '-f', 1, 'Fooism'],
-          ['--bar', '-b', 2, 'Bark']
-        ]
-      )
-      subject.send(:option_details).should ==
-        "    --foo, -f   Fooism\n    --bar, -b   Bark\n"
-    end
-  end
-
-  describe "#short_hand_option" do
-    it "should return '--foo|-f argument'" do
-      option = ["--foo", "-f", GetoptLong::REQUIRED_ARGUMENT]
-      subject.send(:short_hand_option, option).should == "--foo|-f argument"
-    end
-
-    it "should return '--bar|-b'" do
-      option = ["--bar", "-b", nil]
-      subject.send(:short_hand_option, option).should == "--bar|-b"
-    end
-  end
-
   describe "#version_number" do
     it "returns version" do
       BackupJenkins::VERSION = "foo"
