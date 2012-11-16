@@ -57,6 +57,7 @@ describe BackupJenkins::Backup do
     before do
       subject.stub(:plugin_files).and_return("plugin_files")
       subject.stub(:user_content_files).and_return("user_content_files")
+      subject.stub(:user_files).and_return("user_files")
       subject.stub(:jobs_files).and_return("jobs_files")
 
       subject.stub(:create_dir_and_copy)
@@ -66,6 +67,7 @@ describe BackupJenkins::Backup do
 
     it { subject.should_receive(:create_dir_and_copy).with("plugin_files") }
     it { subject.should_receive(:create_dir_and_copy).with("user_content_files") }
+    it { subject.should_receive(:create_dir_and_copy).with("user_files") }
     it { subject.should_receive(:create_dir_and_copy).with("jobs_files") }
   end
 
@@ -291,4 +293,16 @@ describe BackupJenkins::Backup do
       subject.send(:user_content_files).should == %w(my_file)
     end
   end
+
+  describe "#user_files" do
+    before { config.stub_chain(:jenkins, :home).and_return("home") }
+
+    it "should return the config.xml and nextBuildNumber files in job directories" do
+      subject.should_receive(:`).
+        with("find home/users -maxdepth 3 -name config.xml").
+        and_return("file1\nfile2\nfile3")
+      subject.send(:user_files).should == %w(file1 file2 file3)
+    end
+  end
+
 end

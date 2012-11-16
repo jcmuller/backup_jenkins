@@ -52,6 +52,7 @@ module BackupJenkins
     def copy_files
       create_dir_and_copy(plugin_files)
       create_dir_and_copy(user_content_files)
+      create_dir_and_copy(user_files)
       create_dir_and_copy(jobs_files)
     end
 
@@ -85,8 +86,22 @@ module BackupJenkins
       Dir["#{config.jenkins.home}/userContent/*"]
     end
 
+    def user_files
+      find_files('users', 'config.xml')
+    end
+
     def jobs_files
-      `find #{config.jenkins.home}/jobs -maxdepth 3 -name config.xml -or -name nextBuildNumber`.split(/\n/)
+      find_files('jobs', 'config.xml', 'nextBuildNumber')
+    end
+
+    def find_files(base, *names)
+      `#{find_file_command(base, names)}`.split(%r{#{$/}})
+    end
+
+    def find_file_command(base, names)
+      path = File.join(config.jenkins.home, base)
+      names_str = names * " -or -name "
+      "find #{path} -maxdepth 3 -name #{names_str}"
     end
 
     def create_tarball
