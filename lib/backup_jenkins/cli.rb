@@ -6,6 +6,7 @@ module BackupJenkins
 
     class << self
       def run
+        change_program_name
         cli = self.new
         cli.parse_options
         cli.check_config
@@ -61,6 +62,10 @@ module BackupJenkins
     end
 
     private
+
+    def self.change_program_name
+      $0 = File.basename($0) << " (#{VERSION})"
+    end
 
     def options_possible
       [
