@@ -64,7 +64,7 @@ module BackupJenkins
     private
 
     def self.change_program_name
-      $0 = File.basename($0) << " (#{VERSION})"
+      $0 = "#{File.basename($0)} (#{VERSION})"
     end
 
     def options_possible
