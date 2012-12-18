@@ -219,7 +219,7 @@ describe BackupJenkins::Backup do
     end
   end
 
-  describe "#plugin_files" do
+  describe "#plugin_files_jpis" do
     before { config.stub_chain(:jenkins, :home).and_return("home") }
 
     it "returns a collection of directories including all the files that have .jpi" do
@@ -227,7 +227,7 @@ describe BackupJenkins::Backup do
       Dir.should_receive(:[]).with("home/plugins/*.jpi.pinned").and_return(["pinned"])
       Dir.should_receive(:[]).with("home/plugins/*.jpi.disabled").and_return(["disabled"])
 
-      subject.send(:plugin_files).should == %w(jpi pinned disabled)
+      subject.send(:plugin_files_jpis).should == %w(jpi pinned disabled)
     end
   end
 
