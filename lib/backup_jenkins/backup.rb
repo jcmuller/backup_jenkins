@@ -50,6 +50,7 @@ module BackupJenkins
     end
 
     def copy_files
+      create_dir_and_copy(config_file)
       create_dir_and_copy(plugin_files)
       create_dir_and_copy(user_content_files)
       create_dir_and_copy(user_files)
@@ -74,6 +75,10 @@ module BackupJenkins
 
     def new_file_path(file_name)
       "#{backup_directory}/#{file_name.gsub(%r{#{config.jenkins.home}}, "")}".gsub(%r{//}, '/')
+    end
+
+    def config_file
+      Dir["#{config.jenkins.home}/config.xml"]
     end
 
     def plugin_files

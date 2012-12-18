@@ -55,6 +55,7 @@ describe BackupJenkins::Backup do
 
   describe "#copy_files" do
     before do
+      subject.stub(:config_file).and_return("config_file")
       subject.stub(:plugin_files).and_return("plugin_files")
       subject.stub(:user_content_files).and_return("user_content_files")
       subject.stub(:user_files).and_return("user_files")
@@ -65,6 +66,7 @@ describe BackupJenkins::Backup do
 
     after { subject.send(:copy_files) }
 
+    it { subject.should_receive(:create_dir_and_copy).with("config_file") }
     it { subject.should_receive(:create_dir_and_copy).with("plugin_files") }
     it { subject.should_receive(:create_dir_and_copy).with("user_content_files") }
     it { subject.should_receive(:create_dir_and_copy).with("user_files") }
