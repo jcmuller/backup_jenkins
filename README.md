@@ -1,6 +1,6 @@
 # BackupJenkins
-[![Build Status](https://secure.travis-ci.org/jcmuller/backup_jenkins.png)](http://travis-ci.org/jcmuller/backup_jenkins)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/jcmuller/backup_jenkins)
+[![Build Status](https://travis-ci.org/jcmuller/backup_jenkins.png)](http://travis-ci.org/jcmuller/backup_jenkins)
+[![Code Climate](https://codeclimate.com/github/jcmuller/backup_jenkins.png)](https://codeclimate.com/github/jcmuller/backup_jenkins)
 [![Dependency Status](https://gemnasium.com/jcmuller/backup_jenkins.png)](https://gemnasium.com/jcmuller/backup_jenkins)
 
 This gem provides `backup_jenkins`, which provided with a correctly configured `config.yml`
